@@ -1,0 +1,29 @@
+{
+  "devDependencies": {
+    "@prisma/client": "^5.7.1",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.10.4",
+    "dotenv": "^16.3.1",
+    "prisma": "^5.7.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.3.3",
+    "zod": "^3.22.4"
+  },
+  "name": "PETApi",
+  "version": "1.0.0",
+  "description": "PETSIMC's Database API",
+  "main": "index.js",
+  "repository": "https://github.com/ImNotPETSIMC/PETApi",
+  "author": "Enzo Weder",
+  "license": "MIT",
+  "scripts": {
+    "dev": "ts-node-dev src/server.t  s",
+    "vercel-build": "npx prisma generate"
+  },
+  "dependencies": {
+    "axios": "^1.6.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
+  }
+}
