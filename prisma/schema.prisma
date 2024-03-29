@@ -11,5 +11,6 @@ model Student {
   id String @id @default(auto()) @map("_id") @db.ObjectId
   matricula String @unique
   name String
+  photo String
   attendance Int
 }

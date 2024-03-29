@@ -50,11 +50,13 @@ export default class StudentService {
         if (student.name) requestRef.name = normalizeString(student.name, "name");
 
         try {
-            const students = await prisma.student.findFirst({
+            const students = await prisma.student.findMany({
                 where: {
                     matricula: { contains: requestRef.matricula },
                     name: { contains: requestRef.name }
-                }
+                },
+                orderBy: { attendance: 'desc' },
+                take: 10,
             });
 
             return {

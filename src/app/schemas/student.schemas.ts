@@ -49,8 +49,7 @@ export const StudentUpdateRequestSchema = Zod.object({
         .regex(/\d\d\d\d\dBSI[0-9]+/i, { message: "Field matricula must match UFU's pattern for Information System students." }),
 
     attendance: Zod
-        .number()
-        .min(1, { message: "Field attendance must not be empty." })
+        .any()
         .optional()
 });
 
