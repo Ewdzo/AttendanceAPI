@@ -10,15 +10,15 @@
     "typescript": "^5.3.3",
     "zod": "^3.22.4"
   },
-  "name": "PETApi",
+  "name": "AttendanceAPI",
   "version": "1.0.0",
-  "description": "PETSIMC's Database API",
+  "description": "TEBD Final Project's Database API",
   "main": "index.js",
-  "repository": "https://github.com/ImNotPETSIMC/PETApi",
+  "repository": "https://github.com/Ewdzo/AttendanceAPI",
   "author": "Enzo Weder",
   "license": "MIT",
   "scripts": {
-    "dev": "ts-node-dev src/server.t  s",
+    "dev": "ts-node-dev src/server.ts",
     "vercel-build": "npx prisma generate"
   },
   "dependencies": {
