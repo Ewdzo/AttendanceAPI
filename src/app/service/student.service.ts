@@ -4,24 +4,24 @@ import Zod from "zod";
 import { normalizeString } from "../helper/normalizeString";
 import { prisma } from "../database/prisma";
 import { ValidationExceptionError } from "../exception/validation.exception";
-import { MemberCreateRequestSchema, MemberSearchRequestSchema, MemberUpdateRequestSchema } from "../schemas/member.schemas";
 import { Prisma } from "@prisma/client";
+import { StudentCreateRequestSchema, StudentSearchRequestSchema, StudentUpdateRequestSchema } from "../schemas/student.schemas";
 
-export default class MemberService {
-    public async register(member: Zod.infer<typeof MemberCreateRequestSchema>) {
+export default class StudentService {
+    public async register(student: Zod.infer<typeof StudentCreateRequestSchema>) {
         try {
-            const requestRef = member;
+            const requestRef = student;
 
-            requestRef.name = normalizeString(member.name, "name");
-            requestRef.matricula = normalizeString(member.matricula, "matricula");
+            requestRef.name = normalizeString(student.name, "name");
+            requestRef.matricula = normalizeString(student.matricula, "matricula");
 
-            const response = await Axios.get(member.photo, { responseType: 'arraybuffer' });
+            const response = await Axios.get(student.photo, { responseType: 'arraybuffer' });
             const base64Photo = Buffer.from(response.data).toString('base64');
             if (base64Photo.slice(0, 5) != '/9j/4' && base64Photo.charAt(0) != 'i') throw new ValidationExceptionError(400, "Bad Request: Unsupported image extension, try using .jpg or .png");
 
             requestRef.photo = base64Photo;
 
-            const result = await prisma.member.create({
+            const result = await prisma.student.create({
                 data: {
                     ...requestRef
                 }
@@ -32,7 +32,7 @@ export default class MemberService {
             };
         } catch (err) {
             if (err instanceof Prisma.PrismaClientKnownRequestError) {
-                if (err.code == "P2002") throw new ValidationExceptionError(400, "Bad Request: " + member.matricula + " - Já Cadastrado")
+                if (err.code == "P2002") throw new ValidationExceptionError(400, "Bad Request: " + student.matricula + " - Já Cadastrado")
             }
 
             if (err instanceof AxiosError) {
@@ -43,42 +43,43 @@ export default class MemberService {
         }
     };
 
-    public async search(member: Zod.infer<typeof MemberSearchRequestSchema>) {
-        const requestRef = member;
+    public async search(student: Zod.infer<typeof StudentSearchRequestSchema>) {
+        const requestRef = student;
 
-        if (member.matricula) requestRef.matricula = normalizeString(member.matricula, "matricula");
-        if (member.name) requestRef.name = normalizeString(member.name, "name");
+        if (student.matricula) requestRef.matricula = normalizeString(student.matricula, "matricula");
+        if (student.name) requestRef.name = normalizeString(student.name, "name");
 
         try {
-            const members = await prisma.member.findFirst({
+            const students = await prisma.student.findFirst({
                 where: {
-                    matricula: { contains: requestRef.matricula }
+                    matricula: { contains: requestRef.matricula },
+                    name: { contains: requestRef.name }
                 }
             });
 
             return {
-                members
+                students
             };
         } catch (err) {
             throw err;
         }
     };
 
-    public async update(member: Zod.infer<typeof MemberUpdateRequestSchema>) {
-        const requestRef = member;
+    public async update(student: Zod.infer<typeof StudentUpdateRequestSchema>) {
+        const requestRef = student;
 
-        requestRef.matricula = normalizeString(member.matricula, "matricula");
-        if (member.name) requestRef.name = normalizeString(member.name, "name");
+        requestRef.matricula = normalizeString(student.matricula, "matricula");
+        if (student.name) requestRef.name = normalizeString(student.name, "name");
 
         try {
-            if (member.photo) {
-                const response = await Axios.get(member.photo, { responseType: 'arraybuffer' });
+            if (student.photo) {
+                const response = await Axios.get(student.photo, { responseType: 'arraybuffer' });
                 requestRef.photo = Buffer.from(response.data).toString('base64');
 
                 if (requestRef.photo.slice(0, 5) != '/9j/4' && requestRef.photo.charAt(0) != 'i') throw new ValidationExceptionError(400, "Bad Request: Unsupported image extension, try using .jpg or .png");
             };
 
-            const result = await prisma.member.update({
+            const result = await prisma.student.update({
                 where: {
                     matricula: requestRef.matricula
                 },
@@ -92,7 +93,7 @@ export default class MemberService {
             };
         } catch (err) {
             if (err instanceof Prisma.PrismaClientKnownRequestError) {
-                if (err.code == "P2025") throw new ValidationExceptionError(404, requestRef.matricula + " - Member not found");
+                if (err.code == "P2025") throw new ValidationExceptionError(404, requestRef.matricula + " - Student not found");
             }
 
             if (err instanceof AxiosError) {
@@ -108,7 +109,7 @@ export default class MemberService {
 
         try {
 
-            const result = await prisma.member.delete({
+            const result = await prisma.student.delete({
                 where: {
                     matricula: requestRef.matricula
                 }
@@ -120,7 +121,7 @@ export default class MemberService {
 
         } catch (err) {
             if (err instanceof Prisma.PrismaClientKnownRequestError) {
-                if (err.code == "P2025") throw new ValidationExceptionError(404, requestRef.matricula + " - Member not found");
+                if (err.code == "P2025") throw new ValidationExceptionError(404, requestRef.matricula + " - Student not found");
             }
 
             throw err;
